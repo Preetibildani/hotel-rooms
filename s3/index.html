@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+     
+      #navbar{
+        display: flex;
+        justify-content: center;
+        height: 70px;
+       background-color: black;
+        gap: 17%;
+      }
+      input{
+        width: 25%;
+        display: block;
+        height: 40px;
+        margin-top: 10px;
+      }
+      h2{
+        color: white;
+        margin-top: 15px;
+      }
+      a{
+        text-decoration: none;
+      }
+      #sorting{
+        background-color: rgb(112, 228, 112);
+        height: 50px;
+        display: flex;
+      }
+      button{
+        display: block;
+        margin: auto;
+        background-color: orange;
+      }
+      h1{
+        text-align: center;
+      }
+      #hotels_list{
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        margin: auto;
+        row-gap: 20px;
+      }
+      #hotels_list>div{
+        height: 500px;
+        width: 90%;
+        justify-content: center;
+        margin: auto;
+        
+      }
+      img{
+        width: 100%;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="navbar">
+      <h2>Hotel App</h2>
+      <input type="text" id="query" placeholder="Search Hotels" oninput="debouncing(main,100)" onclick="find()">
+      <a href="login.html" id="login"><h2>Log-in</h2></a>
+      <a href="signup.html"id="signup"><h2>Sign-Up</h2></a>
+      <!-- the search-box id:- "query"
+ - the log-in and sign-up link will have ids:- "login" and "signup" -->
+    </div>
+    <div id="sorting">
+      <button id="sort_lth">Price Low to High</button>
+      <button id="sort_htl">Price High to Low</button>
+      <button id="filter_ac">Ac</button>
+      <button id="filter_nonac">Non Ac</button>
+      <!-- sort by price low to high Id:- "sort_lth"
+ - sort by price high to low Id:- "sort_htl"
+ - Filter Ac hotels Id:- "filter_ac"
+ - Filter Non Ac hotels Id:- "filter_nonac" -->
+    </div>
+    <div>
+      <h1>Search Hotels by City</h1>
+      <div id="hotels_list"></div>
+      <!-- - Append all fetched hotels inside div with id:- "hotels_list"
+ - Every hotel card will have id:-  "hotel"
+ - The book now button will have class as "book" -->
+    </div>
+  </body>
+</html>
+
+<script> 
+  let id;
+    async function getData(){
+        let query = document.getElementById("query").value;
+
+        let url = `https://masai-mock-api.herokuapp.com/hotels/search?city=${query}`
+
+        let res = await fetch(url);
+
+        let data = await res.json();
+           url && 
+        fetch(url)
+             .then((api)=> api.json())
+             .then((query)=>{
+                return query;
+             })
+         console.log(data)
+        append(data.hotels)
+    }
+   function append(data){
+    let result = document.getElementById('hotels_list');
+    result.innerHTML= null;
+    data.forEach(function(el){
+      let div = document.createElement("div")
+      div.setAttribute("id","hotel")
+      let img = document.createElement("img")
+      img.src=el.Images.one;
+      let h3 = document.createElement("h3")
+      h3.innerText = el.Title;
+      let Price = document.createElement("p")
+      Price.innerText=el.Price;
+      let Ac = document.createElement("p")
+      Ac.innerText = el.Ac;
+      let Rating = document.createElement("p")
+      Rating.innerText= el.Rating;
+      let btn = document.createElement("button")
+      btn.innerText="Book Now"
+      btn.setAttribute("class","book")
+      div.append(img,h3,Price,Ac,Rating,btn)
+      result.append(div)
+     console.log(el.Images.one)
+    
+    }); 
+   }
+ append(data)
+
+
+
+   async function main(){
+        let data = await getData();
+    }
+    function debouncing(func,delay){
+        if(id){
+            clearTimeout(id);
+        }
+        setTimeout(function(){
+            func()
+        }, delay)
+        
+    }
+</script>
